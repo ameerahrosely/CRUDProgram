@@ -71,7 +71,20 @@ function editClub(id) {
 
 function updateClub(id) {
     if (confirm("Confirm to save this information?")) {
-        //alert($("#c" + id).val() + $("#a" + id).val());
+        $.ajax({
+            type: "post",
+            url: "Default.aspx/UpdateClub",
+            contentType: "application/json; charset=utf-8",
+            data: '{id:"' + id + '",name:"' + $("#c" + id).val() + '",member:"' + $("#a" + id).val() + '"}',
+            dataType: "json",
+            success: function (data) {
+                alert("Data successfully updated.");
+                displayClub();
+            },
+            failure: function (data) {
+                alert("Error in calling Ajax");
+            }
+        });
     } else {
         displayClub();
         stat = 0;

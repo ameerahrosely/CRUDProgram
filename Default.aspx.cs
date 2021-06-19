@@ -43,8 +43,6 @@ namespace CRUDProgram
                     cmd.Parameters.AddWithValue("@DateRegistered", date);
                     cmd.Connection = con;
                     con.Open();
-                    //cmd.ExecuteNonQuery();
-                    
                     int i = cmd.ExecuteNonQuery();
                     con.Close();
                     if (i == 1)
@@ -92,29 +90,33 @@ namespace CRUDProgram
 
         // C# Coding: UPDATE
         [WebMethod(EnableSession = true)]
-        public static List<Club> UpdateClub()
+        public static String UpdateClub(int id, string name, int member)
         {
-            dbcon get = new dbcon();
-
-            List<Club> dataList = new List<Club>();
-
-            string getConfig = "Select id, ClubName, ClubMembers, DateRegistered From club";
-
-            DataTable getDt = new DataTable();
-            getDt = get.dtTable(getConfig);
-
-            foreach (DataRow row in getDt.Rows)
+            string msg = string.Empty;
+            string constr = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
+            using (MySqlConnection con = new MySqlConnection(constr))
             {
-                Club data = new Club();
-                data.clubID = Convert.ToInt32(row["id"]);
-                data.clubName = row["ClubName"].ToString();
-                data.amountOfMembers = Convert.ToInt32(row["ClubMembers"]);
-                data.dateofReg = row["DateRegistered"].ToString();
+                using (MySqlCommand cmd = new MySqlCommand("UPDATE club SET ClubName = @clubName, ClubMembers = @members WHERE id = @ID"))
+                {
+                    cmd.Parameters.AddWithValue("@clubName", name);
+                    cmd.Parameters.AddWithValue("@members", member);
+                    cmd.Parameters.AddWithValue("@ID", id);
+                    cmd.Connection = con;
+                    con.Open();
+                    int i = cmd.ExecuteNonQuery();
+                    con.Close();
+                    if (i == 1)
+                    {
+                        msg = "true";
+                    }
+                    else
+                    {
+                        msg = "false";
+                    }
+                    con.Close();
+                }
             }
-
-            JavaScriptSerializer js = new JavaScriptSerializer();
-            js.Serialize(dataList);
-            return dataList;
+            return msg;
         }
 
         // C# Coding: DELETE
@@ -129,8 +131,6 @@ namespace CRUDProgram
                 {
                     cmd.Connection = con;
                     con.Open();
-                    //cmd.ExecuteNonQuery();
-
                     int i = cmd.ExecuteNonQuery();
                     con.Close();
                     if (i == 1)

@@ -42,7 +42,7 @@ function displayClub() {
                     "<td><input id='a" + item.clubID + "' class='form-control' type='number' value='" + item.amountOfMembers + "' disabled/></td>" +
                     "<td>" + item.dateofReg + "</td>" +
                     "<td><img src='/Images/edit.png' style='width:15%; cursor:pointer' onclick='editClub(" + item.clubID + "); return false;'/> &nbsp" +
-                    "<img src='/Images/remove.png' style='width:15%; cursor:pointer' onclick='deleteClub(" + item.clubID + "); return false;'/></td>" +
+                    "<img src='/Images/remove.png' style='width:15%; cursor:pointer' onclick='deleteClub(" + item.clubID + "); return false;'/> &nbsp" +
                     "<img id='img" + item.clubID + "' src='/Images/check.png' style='width:15%; cursor:pointer; display:none' onclick='updateClub(" + item.clubID + "); return false;'/></td>" +
                     "</tr>");
             });
@@ -54,6 +54,7 @@ function displayClub() {
 }
 
 function editClub(id) {
+    
     if (stat == 0) {
         $("#c" + id).prop("disabled", false);
         $("#a" + id).prop("disabled", false);
@@ -65,6 +66,15 @@ function editClub(id) {
         $("#a" + id).prop("disabled", true);
         stat = 0;
         $("#img" + id).hide();
+    }
+}
+
+function updateClub(id) {
+    if (confirm("Confirm to save this information?")) {
+        //alert($("#c" + id).val() + $("#a" + id).val());
+    } else {
+        displayClub();
+        stat = 0;
     }
 }
 

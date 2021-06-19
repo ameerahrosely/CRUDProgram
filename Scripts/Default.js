@@ -39,8 +39,8 @@ function displayClub() {
                     "<td>" + item.clubName + "</td>" +
                     "<td>" + item.amountOfMembers + "</td>" +
                     "<td>" + item.dateofReg + "</td>" +
-                    "<td><img src='/Images/edit.png' style='width:15%'/> &nbsp" +
-                    "<img src='/Images/remove.png' style='width:15%'/></td>" +
+                    "<td><img src='/Images/edit.png' style='width:15%; cursor:pointer' onclick=''/> &nbsp" +
+                    "<img src='/Images/remove.png' style='width:15%; cursor:pointer' onclick='deleteClub(" + item.clubID + "); return false;'/></td>" +
                     "</tr>");
             });
         },
@@ -48,4 +48,25 @@ function displayClub() {
             alert("Error in calling Ajax");
         }
     });
+}
+
+function deleteClub(id) {
+    if (confirm("Are you sure to delete this club?")) {
+        $.ajax({
+            type: "post",
+            url: "Default.aspx/DeleteClub",
+            contentType: "application/json; charset=utf-8",
+            data: '{id:"' + id + '"}',
+            dataType: "json",
+            success: function (data) {
+                alert("Data successfully deleted.");
+                displayClub();
+            },
+            failure: function (data) {
+                alert("Error in calling Ajax");
+            }
+        });
+    } else {
+        displayClub();
+    }
 }

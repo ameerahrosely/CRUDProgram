@@ -119,31 +119,32 @@ namespace CRUDProgram
 
         // C# Coding: DELETE
         [WebMethod(EnableSession = true)]
-        public static List<Club> DeleteClub()
+        public static String DeleteClub(int id)
         {
-            dbcon get = new dbcon();
-
-            List<Club> dataList = new List<Club>();
-
-            string getConfig = "Select id, ClubName, ClubMembers, DateRegistered From club";
-
-            DataTable getDt = new DataTable();
-            getDt = get.dtTable(getConfig);
-
-            foreach (DataRow row in getDt.Rows)
+            string msg = string.Empty;
+            string constr = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
+            using (MySqlConnection con = new MySqlConnection(constr))
             {
-                Club data = new Club();
-                data.clubID = Convert.ToInt32(row["id"]);
-                data.clubName = row["ClubName"].ToString();
-                data.amountOfMembers = Convert.ToInt32(row["ClubMembers"]);
-                data.dateofReg = row["DateRegistered"].ToString();
-            }
+                using (MySqlCommand cmd = new MySqlCommand("DELETE FROM club WHERE id =" + id))
+                {
+                    cmd.Connection = con;
+                    con.Open();
+                    //cmd.ExecuteNonQuery();
 
-            JavaScriptSerializer js = new JavaScriptSerializer();
-            js.Serialize(dataList);
-            return dataList;
+                    int i = cmd.ExecuteNonQuery();
+                    con.Close();
+                    if (i == 1)
+                    {
+                        msg = "true";
+                    }
+                    else
+                    {
+                        msg = "false";
+                    }
+                    con.Close();
+                }
+            }
+            return msg;
         }
     }
-
-
 }

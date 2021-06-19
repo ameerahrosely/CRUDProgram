@@ -1,4 +1,6 @@
-﻿function openPost() {
+﻿var stat = 0;
+
+function openPost() {
     $("#openSesame").show();
     $(".jumbotron").hide();
     displayClub();
@@ -35,12 +37,13 @@ function displayClub() {
 
             $(data.d).each(function (index, item) {
                 clubBody.append("<tr>" +
-                 "<td>" + item.clubID + "</td>" +
-                    "<td>" + item.clubName + "</td>" +
-                    "<td>" + item.amountOfMembers + "</td>" +
+                    "<td>" + item.clubID + "</td>" +
+                    "<td><input id='c" + item.clubID + "' class='form-control' type='text' value='" + item.clubName + "' disabled/></td>" +
+                    "<td><input id='a" + item.clubID + "' class='form-control' type='number' value='" + item.amountOfMembers + "' disabled/></td>" +
                     "<td>" + item.dateofReg + "</td>" +
-                    "<td><img src='/Images/edit.png' style='width:15%; cursor:pointer' onclick=''/> &nbsp" +
+                    "<td><img src='/Images/edit.png' style='width:15%; cursor:pointer' onclick='editClub(" + item.clubID + "); return false;'/> &nbsp" +
                     "<img src='/Images/remove.png' style='width:15%; cursor:pointer' onclick='deleteClub(" + item.clubID + "); return false;'/></td>" +
+                    "<img id='img" + item.clubID + "' src='/Images/check.png' style='width:15%; cursor:pointer; display:none' onclick='updateClub(" + item.clubID + "); return false;'/></td>" +
                     "</tr>");
             });
         },
@@ -48,6 +51,21 @@ function displayClub() {
             alert("Error in calling Ajax");
         }
     });
+}
+
+function editClub(id) {
+    if (stat == 0) {
+        $("#c" + id).prop("disabled", false);
+        $("#a" + id).prop("disabled", false);
+        $("#img" + id).show();
+        stat = 1;
+    }
+    else if (stat == 1)    {
+        $("#c" + id).prop("disabled", true);
+        $("#a" + id).prop("disabled", true);
+        stat = 0;
+        $("#img" + id).hide();
+    }
 }
 
 function deleteClub(id) {

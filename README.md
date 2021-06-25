@@ -1,5 +1,5 @@
 # CRUDProgram
-Club Management System
+Simple Management System
 
 Languages: HTML, CSS, C#, Javascript (jQuery)
 

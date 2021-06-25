@@ -14,12 +14,15 @@ using MySql.Data.MySqlClient;
 
 namespace CRUDProgram
 {
-    public class Club
+    public class Token
     {
-        public int clubID { get; set; }
-        public String clubName { get; set; }
-        public int amountOfMembers { get; set; }
-        public String dateofReg { get; set; }
+        public int tokenID { get; set; }
+        public String name { get; set; }
+        public String symbol { get; set; }
+        public String address { get; set; }
+        public int supply { get; set; }
+        public int holders { get; set; }
+        public double percentSupply { get; set; }
     }
     public partial class _Default : Page
     {
@@ -30,17 +33,19 @@ namespace CRUDProgram
 
         // C# Coding: CREATE
         [WebMethod]
-        public static string SetClub(string name, int member, string date)
+        public static string SetToken(string name, string symbol, string contact, int supply, int holder)
         {
             string msg = string.Empty;
             string constr = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
             using (MySqlConnection con = new MySqlConnection(constr))
             {
-                using (MySqlCommand cmd = new MySqlCommand("INSERT INTO club (ClubName, ClubMembers, DateRegistered) VALUES (@ClubName, @ClubMembers, @DateRegistered)"))
+                using (MySqlCommand cmd = new MySqlCommand("INSERT INTO token (symbol, name, total_supply, contract_address, total_holders) VALUES (@symbol, @name, @supply, @address, @holder)"))
                 {
-                    cmd.Parameters.AddWithValue("@ClubName", name);
-                    cmd.Parameters.AddWithValue("@ClubMembers", member);
-                    cmd.Parameters.AddWithValue("@DateRegistered", date);
+                    cmd.Parameters.AddWithValue("@symbol", symbol);
+                    cmd.Parameters.AddWithValue("@name", name);
+                    cmd.Parameters.AddWithValue("@supply", supply);
+                    cmd.Parameters.AddWithValue("@address", contact);
+                    cmd.Parameters.AddWithValue("@holder", holder);
                     cmd.Connection = con;
                     con.Open();
                     int i = cmd.ExecuteNonQuery();
@@ -61,24 +66,27 @@ namespace CRUDProgram
 
         // C# Coding: READ
         [WebMethod(EnableSession = true)]
-        public static List<Club> GetClub()
+        public static List<Token> GetToken()
         {
             dbcon get = new dbcon();
 
-            List<Club> dataList = new List<Club>();
+            List<Token> dataList = new List<Token>();
 
-            string getConfig = "Select id, ClubName, ClubMembers, DateRegistered From club";
+            string getConfig = "Select id, symbol, name, total_supply, contract_address, total_holders From token";
 
             DataTable getDt = new DataTable();
             getDt = get.dtTable(getConfig);
 
             foreach (DataRow row in getDt.Rows)
             {
-                Club data = new Club();
-                data.clubID = Convert.ToInt32(row["id"]);
-                data.clubName = row["ClubName"].ToString();
-                data.amountOfMembers = Convert.ToInt32(row["ClubMembers"]);
-                data.dateofReg = row["DateRegistered"].ToString();
+                Token data = new Token();
+                data.tokenID = Convert.ToInt32(row["id"]);
+                data.name = row["name"].ToString();
+                data.symbol = row["symbol"].ToString();
+                data.supply = Convert.ToInt32(row["total_supply"]);
+                data.holders = Convert.ToInt32(row["total_holders"]);
+                data.address = row["contract_address"].ToString();
+                data.percentSupply = 100.0;
 
                 dataList.Add(data);
             }
@@ -90,16 +98,17 @@ namespace CRUDProgram
 
         // C# Coding: UPDATE
         [WebMethod(EnableSession = true)]
-        public static String UpdateClub(int id, string name, int member)
+        public static String UpdateToken(int id, string name, string symbol, int supply)
         {
             string msg = string.Empty;
             string constr = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
             using (MySqlConnection con = new MySqlConnection(constr))
             {
-                using (MySqlCommand cmd = new MySqlCommand("UPDATE club SET ClubName = @clubName, ClubMembers = @members WHERE id = @ID"))
+                using (MySqlCommand cmd = new MySqlCommand("UPDATE token SET name = @TokenName, symbol = @symbol, total_supply = @supply WHERE id = @ID"))
                 {
-                    cmd.Parameters.AddWithValue("@clubName", name);
-                    cmd.Parameters.AddWithValue("@members", member);
+                    cmd.Parameters.AddWithValue("@TokenName", name);
+                    cmd.Parameters.AddWithValue("@symbol", symbol);
+                    cmd.Parameters.AddWithValue("@supply", supply);
                     cmd.Parameters.AddWithValue("@ID", id);
                     cmd.Connection = con;
                     con.Open();
@@ -121,13 +130,13 @@ namespace CRUDProgram
 
         // C# Coding: DELETE
         [WebMethod(EnableSession = true)]
-        public static String DeleteClub(int id)
+        public static String DeleteToken(int id)
         {
             string msg = string.Empty;
             string constr = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
             using (MySqlConnection con = new MySqlConnection(constr))
             {
-                using (MySqlCommand cmd = new MySqlCommand("DELETE FROM club WHERE id =" + id))
+                using (MySqlCommand cmd = new MySqlCommand("DELETE FROM Token WHERE id =" + id))
                 {
                     cmd.Connection = con;
                     con.Open();

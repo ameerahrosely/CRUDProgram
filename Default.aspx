@@ -1,40 +1,78 @@
-﻿<%@ Page Title="Home Page" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="CRUDProgram._Default" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="CRUDProgram._Default" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
 
-    <div class="jumbotron">
-        <h1>CRUD Operations</h1>
-        <p class="lead">This program uses HTML, CSS, C# and JavaScript.</p>
-        <button type="button" class="btn btn-primary btn-lg" onclick="openPost(); return false;">Let's Start! &raquo;</button>
-    </div>
-
-    <div id="openSesame" class="row" style="display:none">  
-        <div class="col-md-4">
-            <h2>Sign Up</h2>
-            <hr />
-            <input class="form-control" type="text" id="clubname" placeholder="What is the club's name?"/><p></p>
-            <input class="form-control" type="text" id="memberAmount" placeholder="How many members?"/><p></p>
-            <input class="form-control" type="datetime-local" id="dateReg"/><p></p>
-            <button type="button" class="btn btn-default" onclick="postClub(); return false;">Go &raquo;</button>
-        </div>
-        <div class="col-md-8">
-            <h2><i>Welcome to the</i> <img src="/Images/club.png" style="width: 4%" /></h2>
-            <hr />
-            <table id="clubTable" class="table" style="width:100%">
-                <thead>
+    <div class="mainBox">
+        <div id="openSesame" class="row">
+            <div class="col-md-4">
+                <h2>Save / Update Token</h2>
+                <hr />
+                <table class="tokenTable" style="width: 100%">
                     <tr>
-                        <th style="width:10%">Club ID</th>
-                        <th style="width:30%">Club Name</th>
-                        <th style="width:10%">Member(s)</th>
-                        <th style="width:30%">Date Registered</th>
-                        <th style="width:20%"></th>
+                        <td>Name</td>
+                        <td>
+                            <input class="form-control" type="text" id="name" placeholder="Name" /></td>
                     </tr>
-                </thead>
-                <tbody id="clubTableBody">
-                </tbody>
-            </table>
+                    <tr>
+                        <td>Symbol</td>
+                        <td>
+                            <input class="form-control" type="text" id="symbol" placeholder="Symbol" /></td>
+                    </tr>
+                    <tr>
+                        <td>Contact Address</td>
+                        <td>
+                            <input class="form-control" type="text" id="contact" placeholder="Contact Address" /></td>
+                    </tr>
+                    <tr>
+                        <td>Total Supply</td>
+                        <td>
+                            <input class="form-control" type="text" id="supply" placeholder="Total Supply" /></td>
+                    </tr>
+                    <tr>
+                        <td>Total Holders</td>
+                        <td>
+                            <input class="form-control" type="text" id="holder" placeholder="Total Holders" /></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <button type="button" class="btn btn-primary" onclick="postToken(); return false;">Save &raquo;</button>
+                            <button type="button" class="btn btn-info" onclick="resetForm(); return false;">Reset</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-8">
+                <h2>Token Statistics by Token Supply</h2>
+                <hr />
+                <div id="chartdiv"></div>
+            </div>
+            <h2 style="color:transparent">-</h2>
+            <button type="button" class="btn btn-success exportBtn" onclick="#">Export <img src="Images/excel.png" style="width:25%"/></button>
+            <hr style="width:97%"/>
+            <div class="col-md-12">
+                <table id="tokenTable" class="table" style="width: 100%">
+                    <thead>
+                        <tr>
+                            <th style="width: 5%">Rank</th>
+                            <th style="width: 10%">Symbol</th>
+                            <th style="width: 10%">Name</th>
+                            <th style="width: 35%">Contact Address</th>
+                            <th style="width: 10%">Total Holders</th>
+                            <th style="width: 10%">Total Supply</th>
+                            <th style="width: 12%">Total Supply (%)</th>
+                            <th style="width: 10%"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="tokenTableBody">
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
     <script src="/Scripts/Default.js"></script>
+    <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
+    <script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
+    <script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
 </asp:Content>

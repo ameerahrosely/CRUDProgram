@@ -53,3 +53,25 @@ textarea {
     margin-right: 20px;
     margin-bottom: 5px;
 }
+
+.pagination a {
+    border: 1px solid lightgrey;
+    border-radius: 3px;
+    padding: 5px;
+}
+
+.pagination a:hover {
+    text-decoration: none;
+    background-color: royalblue;
+    color: white;
+}
+
+.pagination .current {
+    text-decoration: none;
+    background-color: royalblue;
+    color: white;
+}
+
+.hideBtn {
+    display: none;
+}

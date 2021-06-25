@@ -10,28 +10,23 @@
                 <table class="tokenTable" style="width: 100%">
                     <tr>
                         <td>Name</td>
-                        <td>
-                            <input class="form-control" type="text" id="name" placeholder="Name" /></td>
+                        <td><input class="form-control" type="text" id="name" placeholder="Name" /></td>
                     </tr>
                     <tr>
                         <td>Symbol</td>
-                        <td>
-                            <input class="form-control" type="text" id="symbol" placeholder="Symbol" /></td>
+                        <td><input class="form-control" type="text" id="symbol" placeholder="Symbol" /></td>
                     </tr>
                     <tr>
                         <td>Contact Address</td>
-                        <td>
-                            <input class="form-control" type="text" id="contact" placeholder="Contact Address" /></td>
+                        <td><input class="form-control" type="text" id="contact" placeholder="Contact Address" /></td>
                     </tr>
                     <tr>
                         <td>Total Supply</td>
-                        <td>
-                            <input class="form-control" type="text" id="supply" placeholder="Total Supply" /></td>
+                        <td><input class="form-control" type="text" id="supply" placeholder="Total Supply" /></td>
                     </tr>
                     <tr>
                         <td>Total Holders</td>
-                        <td>
-                            <input class="form-control" type="text" id="holder" placeholder="Total Holders" /></td>
+                        <td><input class="form-control" type="text" id="holder" placeholder="Total Holders" /></td>
                     </tr>
                     <tr>
                         <td></td>
@@ -48,7 +43,7 @@
                 <div id="chartdiv"></div>
             </div>
             <h2 style="color:transparent">-</h2>
-            <button type="button" class="btn btn-success exportBtn" onclick="#">Export <img src="Images/excel.png" style="width:25%"/></button>
+            <button type="button" class="btn btn-success exportBtn" onclick="exportToken(); return false;">Export <img src="Images/excel.png" style="width:25%"/></button>
             <hr style="width:97%"/>
             <div class="col-md-12">
                 <table id="tokenTable" class="table" style="width: 100%">
@@ -67,10 +62,13 @@
                     <tbody id="tokenTableBody">
                     </tbody>
                 </table>
+                <div style="float: right">
+                    <div id="pagination" class="pagination"></div>
+                </div>
             </div>
         </div>
     </div>
-
+    <asp:Button ID="btnExportMasterList" OnClick="btnExportMasterList_Click" runat="server" CssClass="hideBtn" />
     <script src="/Scripts/Default.js"></script>
     <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
     <script src="https://cdn.amcharts.com/lib/4/charts.js"></script>

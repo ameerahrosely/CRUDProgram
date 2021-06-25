@@ -8,13 +8,14 @@ $(function () {
     getPieChartData();
     loadPieChart();
     displayToken();
+    loadPageSize();
 })
 
 var Pagination = {
     code: '',
     Extend: function (data) {
         data = data || {};
-        Pagination.size = data.size || 300;
+        Pagination.size = data.size || 100;
         Pagination.page = data.page || 1;
         Pagination.step = data.step || 3;
     },
@@ -33,7 +34,7 @@ var Pagination = {
         Pagination.page = +this.innerHTML;
         Pagination.Start();
         selectedPage = Pagination.page;
-        loadInspectTableData();
+        displayToken();
     },
     Prev: function () {
         Pagination.page--;
@@ -42,7 +43,7 @@ var Pagination = {
         }
         Pagination.Start();
         selectedPage = Pagination.page;
-        loadInspectTableData();
+        displayToken();
     },
     Next: function () {
         Pagination.page++;
@@ -51,7 +52,7 @@ var Pagination = {
         }
         Pagination.Start();
         selectedPage = Pagination.page;
-        loadInspectTableData();
+        displayToken();
     },
     Bind: function () {
         var a = Pagination.e.getElementsByTagName('a');
@@ -115,6 +116,27 @@ function init() {
     });
 }
 
+function loadPageSize() {
+    $.ajax({
+        type: "post",
+        url: "Default.aspx/GetTokenList",
+        contentType: "application/json; charset=utf-8",
+        data: '{selectedPage:"' + selectedPage + '"}',
+        dataType: "json",
+        success: function (data) {
+            $(data.d).each(function (index, item) {
+                if (item.pageCount != null) {
+                    pageSize = parseInt(item.pageCount);
+                    init();
+                }
+            });
+        },
+        failure: function (data) {
+            alert("Error in calling Ajax");
+        }
+    });
+}
+
 function resetForm() {
     $("#name").val("");
     $("#symbol").val("");
@@ -143,9 +165,9 @@ function postToken() {
 function displayToken() {
     $.ajax({
         type: "post",
-        url: "Default.aspx/GetToken",
+        url: "Default.aspx/GetTokenList",
         contentType: "application/json; charset=utf-8",
-        data: '{}',
+        data: '{selectedPage:"' + selectedPage + '"}',
         dataType: "json",
         success: function (data) {
             var tokenBody = $("#tokenTableBody");
@@ -153,18 +175,20 @@ function displayToken() {
             $("#tokenTableBody").trigger('destroy');
 
             $(data.d).each(function (index, item) {
-                tokenBody.append("<tr>" +
-                    "<td>" + item.tokenID + "</td>" +
-                    "<td><input id='sym" + item.tokenID + "' class='form-control' type='text' value='" + item.symbol + "' disabled/></td>" +
-                    "<td><input id='n" + item.tokenID + "' class='form-control' type='text' value='" + item.name + "' disabled/></td>" +
-                    "<td>" + item.address + "</td>" +
-                    "<td>" + item.holders + "</td>" +
-                    "<td><input id='s" + item.tokenID + "' class='form-control' type='text' value='" + item.supply + "' disabled/></td>" +
-                    "<td>" + item.percentSupply + "</td>" +
-                    "<td><img src='/Images/edit.png' style='width:20px; cursor:pointer' onclick='editToken(" + item.tokenID + "); return false;'/> &nbsp" +
-                    "<img src='/Images/remove.png' style='width:20px; cursor:pointer' onclick='deleteToken(" + item.tokenID + "); return false;'/> &nbsp" +
-                    "<img id='img" + item.tokenID + "' src='/Images/check.png' style='width:20px; cursor:pointer; display:none' onclick='updateToken(" + item.tokenID + "); return false;'/></td>" +
-                    "</tr>");
+                if (item.symbol != null) {
+                    tokenBody.append("<tr>" +
+                        "<td>" + item.tokenID + "</td>" +
+                        "<td><input id='sym" + item.tokenID + "' class='form-control' type='text' value='" + item.symbol + "' disabled/></td>" +
+                        "<td><input id='n" + item.tokenID + "' class='form-control' type='text' value='" + item.name + "' disabled/></td>" +
+                        "<td>" + item.address + "</td>" +
+                        "<td>" + item.holders + "</td>" +
+                        "<td><input id='s" + item.tokenID + "' class='form-control' type='text' value='" + item.supply + "' disabled/></td>" +
+                        "<td>" + item.percentSupply + "</td>" +
+                        "<td><img src='/Images/edit.png' style='width:20px; cursor:pointer' onclick='editToken(" + item.tokenID + "); return false;'/> &nbsp" +
+                        "<img src='/Images/remove.png' style='width:20px; cursor:pointer' onclick='deleteToken(" + item.tokenID + "); return false;'/> &nbsp" +
+                        "<img id='img" + item.tokenID + "' src='/Images/check.png' style='width:20px; cursor:pointer; display:none' onclick='updateToken(" + item.tokenID + "); return false;'/></td>" +
+                        "</tr>");
+                }
             });
             getPieChartData();
             loadPieChart();
@@ -280,4 +304,12 @@ function getPieChartData() {
 function assignChartData() {
     loadPieChart();
     chart.data = pieChartData;
+}
+
+function exportToken() {
+    var x = confirm("Are you sure you want to export the report?");
+
+    if (x == true) {
+        $("#MainContent_btnExportMasterList").click();
+    }
 }

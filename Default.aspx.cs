@@ -11,6 +11,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using CRUDdb;
 using MySql.Data.MySqlClient;
+using OfficeOpenXml;
 
 namespace CRUDProgram
 {
@@ -23,6 +24,7 @@ namespace CRUDProgram
         public int supply { get; set; }
         public int holders { get; set; }
         public double percentSupply { get; set; }
+        public double pageCount { get; set; }
     }
     public partial class _Default : Page
     {
@@ -154,6 +156,115 @@ namespace CRUDProgram
                 }
             }
             return msg;
+        }
+
+        // C# Coding: READ FOR PAGINATION TABLE
+        [WebMethod(EnableSession = true)]
+        public static List<Token> GetTokenList(int selectedPage)
+        {
+            dbcon get = new dbcon();
+
+            List<Token> dataList = new List<Token>();
+
+            int nextRow = 10;
+            int offset = (selectedPage * 10) - 10;
+
+            string getConfig = "Select id, symbol, name, total_supply, contract_address, total_holders From token " +
+                " Limit " + nextRow +
+                " Offset " + offset;
+
+            DataTable getDt = new DataTable();
+            getDt = get.dtTable(getConfig);
+
+
+            foreach (DataRow row in getDt.Rows)
+            {
+                Token data = new Token();
+                data.tokenID = Convert.ToInt32(row["id"]);
+                data.name = row["name"].ToString();
+                data.symbol = row["symbol"].ToString();
+                data.supply = Convert.ToInt32(row["total_supply"]);
+                data.holders = Convert.ToInt32(row["total_holders"]);
+                data.address = row["contract_address"].ToString();
+                data.percentSupply = 100.0;
+
+                dataList.Add(data);
+            }
+
+            string getConfigList = "Select id, symbol, name, total_supply, contract_address, total_holders From token ";
+
+            DataTable getDts = new DataTable();
+            getDts = get.dtTable(getConfigList);
+
+            double pageSize = (double)getDts.Rows.Count / 10;
+
+            Token count = new Token();
+            if (pageSize < 1)
+                count.pageCount = 1.0;
+            else
+                count.pageCount = Math.Ceiling(pageSize);
+
+            dataList.Add(count);
+
+            JavaScriptSerializer js = new JavaScriptSerializer();
+            js.Serialize(dataList);
+            return dataList;
+        }
+
+        // C# Coding: EXPORT TO EXCEL AS XLSX
+        protected void btnExportMasterList_Click(object sender, EventArgs e)
+        {
+            dbcon get = new dbcon();
+
+            char a = 'A';
+            int rowStart = 3;
+            int i = 0;
+        
+            ExcelPackage pck = new ExcelPackage();
+            ExcelWorksheet ws = pck.Workbook.Worksheets.Add("Token Summary");
+
+            string fileName = "Token Summary.xlsx";
+
+            for (i = 4; i <= 20; i++)
+            {
+                ws.Column(i).Width = 25;
+            }
+            ws.Column(4).Width = 15;
+            ws.Column(4).Width = 35;
+
+            ws.Cells["A1"].Value = "Rank";
+            ws.Cells["B1"].Value = "Symbol";
+            ws.Cells["C1"].Value = "Name";
+            ws.Cells["D1"].Value = "Contact Address";
+            ws.Cells["E1"].Value = "Total Holders";
+            ws.Cells["F1"].Value = "Total Supply";
+            ws.Cells["G1"].Value = "Total Supply (%)";
+
+            List<Token> dataList = new List<Token>();
+
+            string getList = "Select id, symbol, name, total_supply, contract_address, total_holders From token";
+
+            DataTable listDt = new DataTable();
+            listDt = get.dtTable(getList);
+
+            foreach (DataRow row in listDt.Rows)
+            {
+                ws.Cells[string.Format("A{0}", rowStart)].Value = row["id"].ToString();
+                ws.Cells[string.Format("B{0}", rowStart)].Value = row["symbol"].ToString();
+                ws.Cells[string.Format("C{0}", rowStart)].Value = row["name"].ToString();
+                ws.Cells[string.Format("D{0}", rowStart)].Value = row["total_supply"].ToString();
+                ws.Cells[string.Format("E{0}", rowStart)].Value = row["contract_address"].ToString();
+                ws.Cells[string.Format("F{0}", rowStart)].Value = row["total_holders"].ToString();
+                ws.Cells[string.Format("G{0}", rowStart)].Value = 100;
+
+                rowStart++;
+            }
+
+            Response.Clear();
+            Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            Response.AddHeader("content-disposition", "attachment;filename=" + fileName);
+            Response.BinaryWrite(pck.GetAsByteArray());
+            Response.End();
         }
     }
 }
